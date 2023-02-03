@@ -1,92 +1,60 @@
 #!/usr/bin/python3
 """
-Module composed by a function that multiplies 2 matrices
+Matrix_mul module
+Function that multiplies two matrix
 """
 
 
 def matrix_mul(m_a, m_b):
-    """ Function that multiplies 2 matrices
+    """Return: a nex matrix with the product of m_a and m_b
     Args:
-        m_a: matrix a
-        m_b: matrix b
-    
-    Returns:
-        result of the multiplication
-    
-    Raises:
-        TypeError: if m_a or m_b aren't a list
-        TypeError: if m_a or m_b aren't a list of a lists
-        ValueError: if m_a or m_b are empty
-        TypeError: if the lists of m_a or m_b don't have integers or floats
-        TypeError: if the rows of m_a or m_b don't have the same size
-        ValueError: if m_a and m_b can't be multiplied
-    
-    
+    param1: m_a type list of list is a matrix
+    param2: m_b type list of list is a matrix
+    Raise: TypeError, ValueError
     """
-
     if not isinstance(m_a, list):
         raise TypeError("m_a must be a list")
-
     if not isinstance(m_b, list):
         raise TypeError("m_b must be a list")
-
-    for elems in m_a:
-        if not isinstance(elems, list):
-            raise TypeError("m_a must be a list of lists")
-
-    for elems in m_b:
-        if not isinstance(elems, list):
-            raise TypeError("m_b must be a list of lists")
-
-    if len(m_a) == 0 or (len(m_a) == 1 and len(m_a[0]) == 0):
+    if not all(isinstance(row, list) for row in m_a):
+        raise TypeError("m_a must be a list of lists")
+    if not all(isinstance(row, list) for row in m_b):
+        raise TypeError("m_b must be a list of lists")
+    if m_a == [] or m_a == [[]]:
         raise ValueError("m_a can't be empty")
-
-    if len(m_b) == 0 or (len(m_b) == 1 and len(m_b[0]) == 0):
+    if m_b == [] or m_b == [[]]:
         raise ValueError("m_b can't be empty")
 
-    for lists in m_a:
-        for elems in lists:
-            if not type(elems) in (int, float):
-                raise TypeError("m_a should contain only integers or floats")
+    if not all((isinstance(element, (int, float)))
+               for element in [number for row in m_a for number in row]):
+        raise TypeError("m_a should contain only integers or floats")
+    if not all((isinstance(element, (int, float)))
+               for element in [number for row in m_b for number in row]):
+        raise TypeError("m_b should contain only integers or floats")
 
-    for lists in m_b:
-        for elems in lists:
-            if not type(elems) in (int, float):
-                raise TypeError("m_b should contain only integers or floats")
-
-    length = 0
-
-    for elems in m_a:
-        if length != 0 and length != len(elems):
-            raise TypeError("each row of m_a must be of the same size")
-        length = len(elems)
-
-    length = 0
-
-    for elems in m_b:
-        if length != 0 and length != len(elems):
-            raise TypeError("each row of m_b must be of the same size")
-        length = len(elems)
+    if not all(len(row) == len(m_a[0]) for row in m_a):
+        raise TypeError("each row of m_a must be of the same size")
+    if not all(len(row) == len(m_b[0]) for row in m_b):
+        raise TypeError("each row of m_b must be of the same size")
 
     if len(m_a[0]) != len(m_b):
         raise ValueError("m_a and m_b can't be multiplied")
 
-    r1 = []
-    i1 = 0
+    reverse_matrix = []
+    for i in range(len(m_b[0])):
+        new_row = []
+        for j in range(len(m_b)):
+            new_row.append(m_b[j][i])
+        reverse_matrix.append(new_row)
 
-    for a in m_a:
-        r2 = []
-        i2 = 0
-        num = 0
-        while (i2 < len(m_b[0])):
-            num += a[i1] * m_b[i1][i2]
-            if i1 == len(m_b) - 1:
-                i1 = 0
-                i2 += 1
-                r2.append(num)
-                num = 0
-            else:
-                i1 += 1
-        r1.append(r2)
+    new_matrix = []
+    for irow in m_a:
+        new_row = []
+        for jcol in reverse_matrix:
+            value = 0
+            for k in range(len(reverse_matrix[0])):
+                value += irow[k] * jcol[k]
+            new_row.append(value)
+        new_matrix.append(new_row)
 
-    return r1
+    return (new_matrix)
